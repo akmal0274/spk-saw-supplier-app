@@ -10,6 +10,7 @@ class AuthController extends Controller {
 
             if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['user'] = $user;
+                $_SESSION['csrf_token'] = bin2hex(md5(uniqid(mt_rand(), true)));
                 header('Location: /spk-saw-supplier/dashboard');
                 exit;
             } else {
@@ -37,6 +38,7 @@ class AuthController extends Controller {
 
     public function logout() {
         session_destroy();
+        session_unset();
         header('Location: /spk-saw-supplier/auth/login');
     }
 }

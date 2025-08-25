@@ -37,7 +37,11 @@
                                     $sub = '';
                                     foreach ($alternatif['nilai'] as $n) {
                                         if ($n['kode_kriteria'] === $k['kode_kriteria']) {
-                                            $sub = $n['nama_subkriteria'];
+                                            if ($n['tipe_kriteria'] === 'benefit') {
+                                                $sub = $n['nama_subkriteria']; // tampilkan nama subkriteria
+                                            } else {
+                                                $sub = $n['nilai']; // tampilkan nilai langsung (cost)
+                                            }
                                             break;
                                         }
                                     }

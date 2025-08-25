@@ -69,7 +69,7 @@
                                 $nilai_sub = '-';
                                 foreach ($a['nilai'] as $n) {
                                     if ($n['kode_kriteria'] === $k['kode_kriteria']) {
-                                        $nilai_sub = $n['nilai_subkriteria'];
+                                        $nilai_sub = $n['nilai'];
 
                                         // Hitung max min
                                         if (!isset($max[$k['kode_kriteria']]) || $nilai_sub > $max[$k['kode_kriteria']]) {

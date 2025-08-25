@@ -24,7 +24,9 @@ class AlternatifController extends Controller {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-                die('CSRF token tidak valid!');
+                $_SESSION['login_error'] = "CSRF token tidak valid! Harap login kembali.";
+                header('Location: /spk-saw-supplier/auth/login');
+                exit;
             }
 
             $id_supplier = isset($_POST['id_supplier']) ? $_POST['id_supplier'] : null;
@@ -42,13 +44,31 @@ class AlternatifController extends Controller {
 
             $sukses = true;
 
-            foreach ($subkriteria as $id_kriteria => $id_subkriteria) {
-                $result = $model_nilai->insert($id_supplier, $id_kriteria, $id_subkriteria);
+            foreach ($data['kriteria'] as $kriteria) {
+                $id_kriteria = $kriteria['id'];
+                $tipe = $kriteria['tipe_kriteria'];
+
+                if (!isset($subkriteria[$id_kriteria]) || $subkriteria[$id_kriteria] === '') {
+                    $sukses = false;
+                    break;
+                }
+
+                if ($tipe === 'benefit') {
+                    // isi berupa id_subkriteria
+                    $id_sub = (int)$subkriteria[$id_kriteria];
+                    $result = $model_nilai->insert($id_supplier, $id_kriteria, $id_sub, null);
+                } else {
+                    // isi berupa nilai langsung (cost)
+                    $nilai = (int)$subkriteria[$id_kriteria];
+                    $result = $model_nilai->insert($id_supplier, $id_kriteria, null, $nilai);
+                }
+
                 if (!$result) {
                     $sukses = false;
                     break;
                 }
             }
+
 
             if ($sukses) {
                 $_SESSION['message'] = "Data alternatif berhasil ditambahkan.";
@@ -73,7 +93,9 @@ class AlternatifController extends Controller {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-                die('CSRF token tidak valid!');
+                $_SESSION['login_error'] = "CSRF token tidak valid! Harap login kembali.";
+                header('Location: /spk-saw-supplier/auth/login');
+                exit;
             }
             $result = $model->update($id, $_POST['nama_kriteria'], $_POST['tipe_kriteria'],$_POST['bobot_kriteria']);
             if ($result === false) {

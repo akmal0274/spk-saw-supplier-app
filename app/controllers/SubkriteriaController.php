@@ -23,7 +23,9 @@ class SubkriteriaController extends Controller {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-                die('CSRF token tidak valid!');
+                $_SESSION['login_error'] = "CSRF token tidak valid! Harap login kembali.";
+                header('Location: /spk-saw-supplier/auth/login');
+                exit;
             }
             $model = $this->model('Subkriteria');
             $result = $model->insert($_POST['nama_subkriteria'], $_POST['nilai_subkriteria'], $id);
@@ -48,7 +50,9 @@ class SubkriteriaController extends Controller {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-                die('CSRF token tidak valid!');
+                $_SESSION['login_error'] = "CSRF token tidak valid! Harap login kembali.";
+                header('Location: /spk-saw-supplier/auth/login');
+                exit;
             }
             $result = $model_subkriteria->update($id, $_POST['nama_subkriteria'], $_POST['nilai_subkriteria']);
             if ($result === false) {

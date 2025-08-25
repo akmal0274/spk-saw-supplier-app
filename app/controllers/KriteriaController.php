@@ -13,16 +13,18 @@ class KriteriaController extends Controller {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-                die('CSRF token tidak valid!');
+                $_SESSION['login_error'] = "CSRF token tidak valid! Harap login kembali.";
+                header('Location: /spk-saw-supplier/auth/login');
+                exit;
             }
             $model = $this->model('Kriteria');
             $result = $model->insert($_POST['nama_kriteria'], $_POST['kode_kriteria'], $_POST['tipe_kriteria'], $_POST['bobot_kriteria']);
-            if ($result === false) {
-                $_SESSION['message'] = "Gagal menambahkan kriteria. Kode mungkin sudah ada atau data tidak valid.";
-                $_SESSION['alert-type'] = "danger";
-            } else {
+            if ($result['status']) {
                 $_SESSION['message'] = "Kriteria berhasil ditambahkan.";
                 $_SESSION['alert-type'] = "success";
+            } else {
+                $_SESSION['message'] = $result['message'];
+                $_SESSION['alert-type'] = "danger";
             }
             header('Location: /spk-saw-supplier/kriteria');
             exit;
@@ -36,15 +38,18 @@ class KriteriaController extends Controller {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-                die('CSRF token tidak valid!');
+                $_SESSION['login_error'] = "CSRF token tidak valid! Harap login kembali.";
+                header('Location: /spk-saw-supplier/auth/login');
+                exit;
             }
             $result = $model->update($id, $_POST['nama_kriteria'], $_POST['tipe_kriteria'],$_POST['bobot_kriteria']);
-            if ($result === false) {
-                $_SESSION['message'] = "Gagal menambahkan kriteria. Kode mungkin sudah ada atau data tidak valid.";
-                $_SESSION['alert-type'] = "danger";
-            } else {
+
+            if ($result['status']) {
                 $_SESSION['message'] = "Kriteria berhasil diedit.";
                 $_SESSION['alert-type'] = "success";
+            }else{
+                $_SESSION['message'] = $result['message'];
+                $_SESSION['alert-type'] = "danger";
             }
             header('Location: /spk-saw-supplier/kriteria');
             exit;

@@ -1,16 +1,36 @@
 <?php
 class Controller {
-    // load model
+    public function __construct() {
+        if (isset($_GET['url']) && strpos($_GET['url'], 'logout') !== false) {
+            return;
+        }
+
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $current = get_class($this);
+
+        if (!isset($_SESSION['user'])) {
+            if ($current !== 'AuthController') {
+                header('Location: /spk-saw-supplier/auth/login');
+                exit;
+            }
+        } else {
+            if ($current === 'AuthController') {
+                header('Location: /spk-saw-supplier/dashboard');
+                exit;
+            }
+        }
+    }
+
     public function model($model) {
         require_once __DIR__ . '/../app/models/' . $model . '.php';
         return new $model;
     }
 
-    // load view
     public function view($view, $data = []) {
         extract($data);
-        
-        // Mulai buffer view
         ob_start();
         require_once __DIR__ . '/../app/views/' . $view . '.php';
         $content = ob_get_clean();
@@ -18,9 +38,8 @@ class Controller {
         if (!in_array($view, $authViews)) {
             require_once __DIR__ . '/../app/views/layout.php';
         } else {
-            // Render content directly for auth views
             echo $content;
         }
-        
+            
     }
 }

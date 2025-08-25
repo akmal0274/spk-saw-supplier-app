@@ -2,12 +2,18 @@
 function is_active($controller, $method = '') {
     $currentController = App::$currentController ?: 'Dashboard';
     $currentMethod = App::$currentMethod ?: 'index';
+
+    $currentController = str_replace('Controller', '', $currentController);
     $isActive = ($currentController == $controller);
     if ($method !== '') {
         $isActive = $isActive && ($currentMethod == $method);
     }
     return $isActive ? 'active' : '';
 }
+?>
+
+<?php
+echo "<!-- DEBUG: Controller = " . App::$currentController . ", Method = " . App::$currentMethod . " -->";
 ?>
 
 <ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion" id="accordionSidebar">

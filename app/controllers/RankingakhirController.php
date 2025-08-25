@@ -26,7 +26,7 @@ class RankingakhirController extends Controller
             $matrix[$a['id']] = [];
             foreach ($a['nilai'] as $n) {
                 $kode = $n['kode_kriteria'];
-                $nilai = (float) $n['nilai_subkriteria'];
+                $nilai = (float) $n['nilai'];
                 $matrix[$a['id']][$kode] = $nilai;
 
                 if (!isset($max[$kode]) || $nilai > $max[$kode]) {
@@ -107,7 +107,7 @@ class RankingakhirController extends Controller
             $matrix[$a['id']] = [];
             foreach ($a['nilai'] as $n) {
                 $kode = $n['kode_kriteria'];
-                $nilai = (float) $n['nilai_subkriteria'];
+                $nilai = (float) $n['nilai'];
                 $matrix[$a['id']][$kode] = $nilai;
 
                 if (!isset($max[$kode]) || $nilai > $max[$kode]) {

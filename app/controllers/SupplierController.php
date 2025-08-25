@@ -13,7 +13,9 @@ class SupplierController extends Controller {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-                die('CSRF token tidak valid!');
+                $_SESSION['login_error'] = "CSRF token tidak valid! Harap login kembali.";
+                header('Location: /spk-saw-supplier/auth/login');
+                exit;
             }
             $model = $this->model('Supplier');
             $result = $model->insert($_POST['nama_supplier']);
@@ -36,7 +38,9 @@ class SupplierController extends Controller {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-                die('CSRF token tidak valid!');
+                $_SESSION['login_error'] = "CSRF token tidak valid! Harap login kembali.";
+                header('Location: /spk-saw-supplier/auth/login');
+                exit;
             }
             $result = $model->update($id, $_POST['nama_supplier']);
             if ($result === false) {

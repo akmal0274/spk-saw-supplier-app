@@ -17,11 +17,13 @@ class Alternatif extends Model {
                 SELECT 
                     k.nama_kriteria, 
                     k.kode_kriteria,
+                    k.tipe_kriteria,
                     sk.nama_subkriteria, 
-                    sk.nilai_subkriteria 
+                    sk.nilai_subkriteria AS nilai_sub_benefit,
+                    na.nilai_subkriteria_cost AS nilai_sub_cost
                 FROM nilai_alternatif na
                 JOIN kriteria k ON na.id_kriteria = k.id
-                JOIN subkriteria sk ON na.id_subkriteria = sk.id
+                LEFT JOIN subkriteria sk ON na.id_subkriteria = sk.id
                 WHERE na.id_supplier = $id_supplier
             ";
 
@@ -32,17 +34,44 @@ class Alternatif extends Model {
                 echo "SQL: " . $sql_nilai . "<br>";
                 $supplier['nilai'] = [];
             } else {
-                $supplier['nilai'] = mysqli_fetch_all($query_nilai, MYSQLI_ASSOC);
+                $rows = mysqli_fetch_all($query_nilai, MYSQLI_ASSOC);
+
+                // Normalisasi agar konsisten: satu field 'nilai'
+                foreach ($rows as &$row) {
+                    if ($row['tipe_kriteria'] === 'benefit') {
+                        $row['nilai'] = $row['nilai_sub_benefit'];
+                    } else {
+                        $row['nilai'] = $row['nilai_sub_cost'];
+                    }
+                }
+
+                $supplier['nilai'] = $rows;
             }
         }
 
         return $suppliers;
     }
 
-    public function insert($id_supplier, $id_kriteria, $id_subkriteria){
+
+    public function insert($id_supplier, $id_kriteria, $id_subkriteria = null, $nilai_subkriteria = null){
         $id_supplier = (int)$id_supplier;
         $id_kriteria = (int)$id_kriteria;
-        $id_subkriteria = (int)$id_subkriteria;
-        return mysqli_query($this->conn, "INSERT INTO nilai_alternatif (id_supplier, id_kriteria, id_subkriteria) VALUES ($id_supplier, $id_kriteria, $id_subkriteria)");
+
+        if ($id_subkriteria !== null) {
+            $id_subkriteria = (int)$id_subkriteria;
+            return mysqli_query(
+                $this->conn, 
+                "INSERT INTO nilai_alternatif (id_supplier, id_kriteria, id_subkriteria) 
+                VALUES ($id_supplier, $id_kriteria, $id_subkriteria)"
+            );
+        } else {
+            $nilai_subkriteria = (float)$nilai_subkriteria;
+            return mysqli_query(
+                $this->conn, 
+                "INSERT INTO nilai_alternatif (id_supplier, id_kriteria, nilai_subkriteria_cost) 
+                VALUES ($id_supplier, $id_kriteria, $nilai_subkriteria)"
+            );
+        }
     }
+
 }

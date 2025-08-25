@@ -25,21 +25,32 @@
                         <label for="kriteria_<?= $kriteria['id'] ?>">
                             <?= htmlspecialchars($kriteria['nama_kriteria']) ?>
                         </label>
-                        <select 
-                            id="kriteria_<?= $kriteria['id'] ?>" 
-                            name="subkriteria[<?= $kriteria['id'] ?>]" 
-                            class="form-control" 
-                            required
-                        >
-                            <option value="">-- Pilih Subkriteria --</option>
-                            <?php foreach ($data['subkriteria'] as $sub): ?>
-                                <?php if ($sub['id_kriteria'] == $kriteria['id']): ?>
-                                    <option value="<?= $sub['id'] ?>">
-                                        <?= htmlspecialchars($sub['nama_subkriteria']) ?>
-                                    </option>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </select>
+                        <?php if ($kriteria['tipe_kriteria'] == 'benefit'): ?>
+                            <select 
+                                id="kriteria_<?= $kriteria['id'] ?>" 
+                                name="subkriteria[<?= $kriteria['id'] ?>]" 
+                                class="form-control" 
+                                required
+                            >
+                                <option value="">-- Pilih Subkriteria --</option>
+                                <?php foreach ($data['subkriteria'] as $sub): ?>
+                                    <?php if ($sub['id_kriteria'] == $kriteria['id']): ?>
+                                        <option value="<?= $sub['id'] ?>">
+                                            <?= htmlspecialchars($sub['nama_subkriteria']) ?>
+                                        </option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </select>
+                        <?php else: ?>
+                            <input 
+                                type="number" 
+                                id="kriteria_<?= $kriteria['id'] ?>" 
+                                name="subkriteria[<?= $kriteria['id'] ?>]" 
+                                class="form-control"
+                                placeholder="Masukkan nilai dengan format angka" 
+                                required
+                            >
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
                     
